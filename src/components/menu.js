@@ -1,7 +1,7 @@
 (() => ({
   name: 'Menu',
   type: 'CONTENT_COMPONENT',
-  allowedTypes: ['CONTENT_COMPONENT'],
+  allowedTypes: ['CONTENT_COMPONENT', 'CONTAINER_COMPONENT'],
   orientation: 'VERTICAL',
   jsx: (() => {
     const { Button, Menu, Avatar } = window.MaterialUI.Core;
