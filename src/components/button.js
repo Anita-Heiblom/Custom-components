@@ -65,8 +65,8 @@
 
     B.defineFunction('Show', () => setIsVisible(true));
     B.defineFunction('Hide', () => setIsVisible(false));
-    B.defineFunction('Show/Hide', () => setIsVisible(s => !s));
-    B.defineFunction('Toggle loading state', () => setIsLoading(s => !s));
+    B.defineFunction('Show/Hide', () => setIsVisible((s) => !s));
+    B.defineFunction('Toggle loading state', () => setIsLoading((s) => !s));
 
     useEffect(() => {
       if (loading) {
@@ -123,7 +123,7 @@
           iconPosition === 'end' &&
           React.createElement(Icons[icon])
         }
-        onClick={event => {
+        onClick={(event) => {
           event.stopPropagation();
           actionCallback();
         }}
@@ -144,7 +144,7 @@
     }
     return isVisible ? ButtonComponent : <></>;
   })(),
-  styles: B => t => {
+  styles: (B) => (t) => {
     const style = new B.Styling(t);
     const getSpacing = (idx, device = 'Mobile') =>
       idx === '0' ? '0rem' : style.getSpacing(idx, device);
