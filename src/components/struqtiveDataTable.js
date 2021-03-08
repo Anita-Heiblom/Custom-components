@@ -173,10 +173,8 @@
 			: {};
 
 		const mergedFilter =
-			searchProperty &&
-			searchTerm !== '' &&
-			overrideFilter &&
-			Object.values(newFilter).length > 0
+			(searchProperty && searchTerm !== '' && overrideFilter) ||
+			(overrideFilter && Object.values(newFilter).length > 0)
 				? deepMerge(searchFilter)
 				: searchProperty && searchTerm !== '' && !overrideFilter
 				? deepMerge(filter, searchFilter)
