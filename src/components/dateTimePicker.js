@@ -69,6 +69,7 @@
 		const isValidDate = (date) => date instanceof Date && !isNaN(date);
 
 		const toJSONLocal = (date) => {
+			debugger;
 			var local = new Date(date);
 			local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
 			return local.toJSON().slice(0, 10);
@@ -77,7 +78,7 @@
 		const changeHandler = (date) => {
 			setSelectedDate(date);
 			if (useAsFilter) {
-				if (date !== null) {
+				if (date !== null && date.toString() !== 'Invalid Date') {
 					const value = getDeepestObject(rawFilterBy);
 					const parsedDate =
 						filterPropType === 'date' ? toJSONLocal(date) : date.toISOString();
