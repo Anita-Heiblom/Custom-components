@@ -202,10 +202,15 @@
 					: {};
 
 				const mergedFilter =
-					searchProperty && searchTerm !== '' && overrideFilter
+					searchProperty &&
+					searchTerm !== '' &&
+					overrideFilter &&
+					Object.values(newFilter).length > 0
 						? deepMerge(searchFilter)
 						: searchProperty && searchTerm !== '' && !overrideFilter
 						? deepMerge(filter, searchFilter)
+						: overrideFilter && Object.values(newFilter).length > 0
+						? {}
 						: filter;
 
 				const where = {
