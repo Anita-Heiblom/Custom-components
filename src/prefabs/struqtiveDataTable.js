@@ -227,28 +227,12 @@
 					label: 'Override filter',
 					key: 'overrideFilter',
 					value: false,
-					configuration: {
-						condition: {
-							type: 'HIDE',
-							option: 'hideSearch',
-							comparator: 'EQ',
-							value: true,
-						},
-					},
 				},
 				{
 					type: 'NUMBER',
 					label: 'Search time out in ms',
 					key: 'searchTimeOut',
 					value: 1000,
-					configuration: {
-						condition: {
-							type: 'HIDE',
-							option: 'hideSearch',
-							comparator: 'EQ',
-							value: true,
-						},
-					},
 				},
 				{
 					value: '',
