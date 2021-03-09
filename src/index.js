@@ -8,6 +8,7 @@ import nlLocale from 'date-fns/locale/nl';
 import InnerImageZoom from 'react-inner-image-zoom';
 import css from 'react-inner-image-zoom/lib/InnerImageZoom/styles.min.css';
 import FullCalendar from '@fullcalendar/react';
+import SignaturePad from 'react-signature-pad-wrapper';
 
 import Icons from './icons';
 
@@ -16,6 +17,8 @@ window.css = css;
 window.InnerImageZoom = InnerImageZoom;
 
 window.FullCalendar = FullCalendar;
+
+window.SignaturePad = SignaturePad;
 
 export default {
 	Core,
