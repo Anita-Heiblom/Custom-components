@@ -6,17 +6,12 @@
 	jsx: (() => {
 		const { env, getCustomModelAttribute, useText } = B;
 		const SignaturePad = window.SignaturePad;
-		const {
-			FormControl,
-			FormControlLabel,
-			FormHelperText,
-		} = window.MaterialUI.Core;
+		const { Input, FormHelperText, InputLabel } = window.MaterialUI.Core;
 		const {
 			helperText,
 			fullWidth,
 			error,
 			validationValueMissing,
-			margin,
 			hideLabel,
 			customModelAttribute: customModelAttributeObj,
 			nameAttribute,
@@ -36,13 +31,27 @@
 		const signaturePadRef = useRef(null);
 		const [helper, setHelper] = useState(useText(helperText));
 
-		B.defineFunction('ClearSignature', () => signaturePadRef.current.clear());
+		B.defineFunction('ClearSignature', () => {
+			setValue('');
+			signaturePadRef.current.clear();
+		});
 
-		const handleChange = (event) => {
-			const { target } = event;
-			let { validity: validation } = target;
-			handleValidation(validation);
+		// const resizeCanvas = () => {
+		// 	const canvas = document.querySelector('canvas');
+		// 	const ratio = Math.max(window.devicePixelRatio || 1, 1);
+		// 	canvas.width = canvas.offsetWidth * ratio;
+		// 	canvas.height = canvas.offsetHeight * ratio;
+		// 	canvas.getContext('2d').scale(ratio, ratio);
+		// 	signaturePadRef.current.clear(); // otherwise isEmpty() might return incorrect value
+		// };
 
+		// window.addEventListener('resize', resizeCanvas);
+
+		// useEffect(() => {
+		// 	resizeCanvas();
+		// }, []);
+
+		const handleChange = () => {
 			if (!signaturePadRef.current.isEmpty()) {
 				const image = signaturePadRef.current.toDataURL();
 				const splittedImage = image.split(',');
@@ -65,52 +74,43 @@
 		};
 
 		const Control = () => (
-			<FormControl
-				fullWidth={fullWidth}
-				required={required}
-				margin={margin}
-				error={errorState}
-			>
-				<FormControlLabel
-					control={
-						<div
-							className={[
-								classes.signaturePad,
-								fullWidth ? classes.fullwidth : '',
-							].join(' ')}
-							onMouseUp={handleChange}
-						>
-							<SignaturePad ref={signaturePadRef} onMouseUp={handleChange} />
-							<input
-								hidden
-								name={nameAttributeValue || customModelAttributeName}
-								value={value}
-								required={required}
-								onInvalid={invalidHandler}
-							/>
-						</div>
-					}
-					label={hideLabel ? '' : `${labelText}${requiredText}`}
-					labelPlacement='top'
+			<>
+				<InputLabel
 					classes={{
 						root: classes.label,
 					}}
-				/>
+				>
+					{hideLabel ? '' : `${labelText}${requiredText}`}
+				</InputLabel>
+				<div
+					className={[
+						classes.signaturePad,
+						fullWidth ? classes.fullwidth : '',
+					].join(' ')}
+					onMouseUp={handleChange}
+				>
+					<SignaturePad ref={signaturePadRef} onMouseUp={handleChange} />
+					<Input
+						classes={{ input: classes.input }}
+						name={nameAttributeValue || customModelAttributeName}
+						value={value}
+						required={required}
+						onInvalid={invalidHandler}
+						onChange={invalidHandler}
+						error={errorState}
+					/>
+				</div>
 				{helper && (
-					<FormHelperText classes={{ root: classes.helper }}>
+					<FormHelperText
+						className={errorState ? classes.error : classes.helper}
+					>
 						{helper}
 					</FormHelperText>
 				)}
-			</FormControl>
+			</>
 		);
 
-		return isDev ? (
-			<div id='signature' className={classes.root}>
-				{Control()}
-			</div>
-		) : (
-			<div id='signature'>{Control()}</div>
-		);
+		return isDev ? <div className={classes.root}>{Control()}</div> : Control();
 	})(),
 	styles: (B) => (t) => {
 		const { color: colorFunc, env, Styling } = B;
@@ -120,9 +120,6 @@
 
 		return {
 			root: {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
 				height: '100%',
 				width: '100%',
 				fontSize: '0.75rem',
@@ -134,6 +131,7 @@
 				backgroundColor: '#F0F1F5',
 			},
 			signaturePad: {
+				width: '30%',
 				border: '1px solid',
 				borderRadius: '4px',
 				borderColor: ({ options: { borderColor } }) => [
@@ -161,15 +159,15 @@
 					style.getColor(helperColor),
 					'!important',
 				],
-				'&.Mui-error': {
-					color: ({ options: { errorColor } }) => [
-						style.getColor(errorColor),
-						'!important',
-					],
-				},
+			},
+			error: {
+				color: ({ options: { errorColor } }) => [
+					style.getColor(errorColor),
+					'!important',
+				],
 			},
 			input: {
-				display: 'none',
+				display: 'none !important',
 			},
 			control: {
 				display: 'inline-flex',

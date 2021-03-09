@@ -48,21 +48,6 @@
 					value: true,
 				},
 				{
-					label: 'Margin',
-					key: 'margin',
-					value: 'normal',
-					type: 'CUSTOM',
-					configuration: {
-						as: 'BUTTONGROUP',
-						dataType: 'string',
-						allowedInput: [
-							{ name: 'None', value: 'none' },
-							{ name: 'Dense', value: 'dense' },
-							{ name: 'Normal', value: 'normal' },
-						],
-					},
-				},
-				{
 					value: false,
 					label: 'Styles',
 					key: 'styles',
