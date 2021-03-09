@@ -36,21 +36,6 @@
 			signaturePadRef.current.clear();
 		});
 
-		// const resizeCanvas = () => {
-		// 	const canvas = document.querySelector('canvas');
-		// 	const ratio = Math.max(window.devicePixelRatio || 1, 1);
-		// 	canvas.width = canvas.offsetWidth * ratio;
-		// 	canvas.height = canvas.offsetHeight * ratio;
-		// 	canvas.getContext('2d').scale(ratio, ratio);
-		// 	signaturePadRef.current.clear(); // otherwise isEmpty() might return incorrect value
-		// };
-
-		// window.addEventListener('resize', resizeCanvas);
-
-		// useEffect(() => {
-		// 	resizeCanvas();
-		// }, []);
-
 		const handleChange = () => {
 			if (!signaturePadRef.current.isEmpty()) {
 				const image = signaturePadRef.current.toDataURL();
@@ -89,7 +74,11 @@
 					].join(' ')}
 					onMouseUp={handleChange}
 				>
-					<SignaturePad ref={signaturePadRef} onMouseUp={handleChange} />
+					<SignaturePad
+						ref={signaturePadRef}
+						onMouseUp={handleChange}
+						redrawOnResize={true}
+					/>
 					<Input
 						classes={{ input: classes.input }}
 						name={nameAttributeValue || customModelAttributeName}
