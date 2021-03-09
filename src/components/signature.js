@@ -9,6 +9,7 @@
 		const { Input, FormHelperText, InputLabel } = window.MaterialUI.Core;
 		const {
 			helperText,
+			penColor,
 			fullWidth,
 			error,
 			validationValueMissing,
@@ -78,6 +79,7 @@
 						ref={signaturePadRef}
 						onMouseUp={handleChange}
 						redrawOnResize={true}
+						options={{ penColor: penColor }}
 					/>
 					<Input
 						classes={{ input: classes.input }}

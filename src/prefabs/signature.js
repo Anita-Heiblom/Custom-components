@@ -22,6 +22,12 @@
 					type: 'VARIABLE',
 				},
 				{
+					value: '#000000',
+					label: 'Pen color',
+					key: 'penColor',
+					type: 'TEXT',
+				},
+				{
 					value: false,
 					label: 'Validation options',
 					key: 'validationOptions',
