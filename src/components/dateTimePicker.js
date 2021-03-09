@@ -77,7 +77,7 @@
 		const changeHandler = (date) => {
 			setSelectedDate(date);
 			if (useAsFilter) {
-				if (date !== null) {
+				if (date !== null && date.toString() !== 'Invalid Date') {
 					const value = getDeepestObject(rawFilterBy);
 					const parsedDate =
 						filterPropType === 'date' ? toJSONLocal(date) : date.toISOString();

@@ -82,7 +82,7 @@
 		const fetchingNextSet = useRef(false);
 		const [initialTimesFetched, setInitialTimesFetched] = useState(0);
 		const amountOfRows = loadOnScroll ? autoLoadTakeAmountNum : rowsPerPage;
-
+		const history = isDev ? null : useHistory();
 		const [newFilter, setNewFilter] = useState({});
 
 		const createSortObject = (fields, order) => {
@@ -113,6 +113,19 @@
 		const toolbarRef = React.createRef();
 		const paginationRef = React.createRef();
 		const [stylesProps, setStylesProps] = useState(null);
+
+		B.defineFunction('updateFilter', (updatedFilter) => {
+			if (updatedFilter.filter != undefined) {
+				setNewFilter((prevFilter) => ({
+					...prevFilter,
+					[updatedFilter.label]: updatedFilter.filter,
+				}));
+			} else {
+				const filterCopy = { ...newFilter };
+				delete filterCopy[updatedFilter.label];
+				setNewFilter(filterCopy);
+			}
+		});
 
 		const deepMerge = (...objects) => {
 			const isObject = (item) =>
@@ -150,21 +163,13 @@
 			  )
 			: {};
 
-		B.defineFunction('updateFilter', (updatedFilter) => {
-			if (updatedFilter.filter != undefined) {
-				setNewFilter((prevFilter) => ({
-					...prevFilter,
-					[updatedFilter.label]: updatedFilter.filter,
-				}));
-			} else {
-				const filterCopy = { ...newFilter };
-				delete filterCopy[updatedFilter.label];
-				setNewFilter(filterCopy);
-			}
-		});
+		const mergedFilter =
+			searchProperty && searchTerm !== ''
+				? deepMerge(filter, searchFilter)
+				: filter;
 
 		const where = {
-			...useFilter(filter),
+			...useFilter(mergedFilter),
 			...(Object.values(newFilter).length > 0
 				? {
 						_and: Object.values(newFilter),
@@ -172,6 +177,7 @@
 				: {}),
 		};
 
+		// TODO: move model to skip
 		const { loading, error, data, refetch } =
 			model &&
 			useAllQuery(model, {
@@ -179,6 +185,19 @@
 				variables,
 				skip: loadOnScroll ? skip : page * rowsPerPage,
 				take: loadOnScroll ? autoLoadTakeAmountNum : rowsPerPage,
+				onCompleted(res) {
+					const hasResult = res && res.result && res.result.length > 0;
+					if (hasResult) {
+						B.triggerEvent('onSuccess', res.results);
+					} else {
+						B.triggerEvent('onNoResults');
+					}
+				},
+				onError(err) {
+					if (!displayError) {
+						B.triggerEvent('onError', err);
+					}
+				},
 			});
 
 		useEffect(() => {
@@ -287,16 +306,6 @@
 			}
 		}, [loading]);
 
-		if (error && !displayError) {
-			B.triggerEvent('onError', error);
-		}
-
-		if (results.length > 0) {
-			B.triggerEvent('onSuccess', results);
-		} else {
-			B.triggerEvent('onNoResults');
-		}
-
 		const handleChangePage = (_, newPage) => {
 			if (loading || error) return;
 			setPage(newPage);
@@ -325,8 +334,8 @@
 		const handleRowClick = (endpoint, context) => {
 			if (isDev) return;
 			B.triggerEvent('OnRowClick', endpoint, context);
+
 			if (hasLink) {
-				const history = useHistory();
 				history.push(endpoint);
 			}
 		};
