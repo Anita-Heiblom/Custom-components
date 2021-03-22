@@ -1,5 +1,5 @@
 (() => ({
-	name: 'StruqtiveDataTable',
+	name: 'DataTable',
 	icon: 'DataTable',
 	category: 'DATA',
 	beforeCreate: ({
@@ -147,7 +147,7 @@
 	},
 	structure: [
 		{
-			name: 'StruqtiveDataTable',
+			name: 'DataTable',
 			options: [
 				{
 					value: '',
@@ -227,6 +227,20 @@
 					label: 'Override filter',
 					key: 'overrideFilter',
 					value: false,
+				},
+				{
+					label: 'External filtering type',
+					key: 'externalFilterType',
+					value: '_and',
+					type: 'CUSTOM',
+					configuration: {
+						as: 'BUTTONGROUP',
+						dataType: 'string',
+						allowedInput: [
+							{ name: 'AND', value: '_and' },
+							{ name: 'OR', value: '_or' },
+						],
+					},
 				},
 				{
 					type: 'NUMBER',

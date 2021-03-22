@@ -69,7 +69,6 @@
 		const isValidDate = (date) => date instanceof Date && !isNaN(date);
 
 		const toJSONLocal = (date) => {
-			debugger;
 			var local = new Date(date);
 			local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
 			return local.toJSON().slice(0, 10);

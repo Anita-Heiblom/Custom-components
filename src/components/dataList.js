@@ -1,5 +1,5 @@
 (() => ({
-	name: 'StruqtiveDataList',
+	name: 'DataList',
 	type: 'CONTAINER_COMPONENT',
 	allowedTypes: ['BODY_COMPONENT', 'CONTAINER_COMPONENT', 'CONTENT_COMPONENT'],
 	orientation: 'HORIZONTAL',
@@ -23,6 +23,7 @@
 					take,
 					filter,
 					overrideFilter,
+					externalFilterType,
 					searchTimeOut,
 					type,
 					model,
@@ -215,7 +216,7 @@
 					...useFilter(mergedFilter),
 					...(Object.values(newFilter).length > 0
 						? {
-								_and: Object.values(newFilter),
+								[externalFilterType]: Object.values(newFilter),
 						  }
 						: {}),
 				};

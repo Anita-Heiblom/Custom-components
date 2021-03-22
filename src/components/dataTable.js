@@ -1,5 +1,5 @@
 (() => ({
-	name: 'StruqtiveDataTable',
+	name: 'DataTable',
 	type: 'CONTENT_COMPONENT',
 	allowedTypes: ['DATATABLE_COLUMN'],
 	orientation: 'HORIZONTAL',
@@ -38,6 +38,7 @@
 			filter,
 			searchProperty,
 			overrideFilter,
+			externalFilterType,
 			searchTimeOut,
 			hideSearch,
 			orderProperty,
@@ -186,7 +187,7 @@
 			...useFilter(mergedFilter),
 			...(Object.values(newFilter).length > 0
 				? {
-						_and: Object.values(newFilter),
+						[externalFilterType]: Object.values(newFilter),
 				  }
 				: {}),
 		};

@@ -1,4 +1,4 @@
 function Logout(): void {
-  localStorage.removeItem('TOKEN');
-  localStorage.removeItem('REFRESH_TOKEN');
+	localStorage.removeItem('TOKEN');
+	localStorage.removeItem('REFRESH_TOKEN');
 }
