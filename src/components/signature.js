@@ -73,13 +73,11 @@
 						classes.signaturePad,
 						fullWidth ? classes.fullwidth : '',
 					].join(' ')}
-					onMouseUp={handleChange}
 				>
 					<SignaturePad
 						ref={signaturePadRef}
-						onMouseUp={handleChange}
 						redrawOnResize={true}
-						options={{ penColor: penColor }}
+						options={{ penColor: penColor, onEnd: handleChange }}
 					/>
 					<Input
 						classes={{ input: classes.input }}
