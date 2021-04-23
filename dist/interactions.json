@@ -1,1 +1,1 @@
-[{"function":"function Logout(): void {\n\tlocalStorage.removeItem('TOKEN');\n\tlocalStorage.removeItem('REFRESH_TOKEN');\n}\n","name":"Logout","parameters":{},"type":"Void"},{"function":"function setCurrentRecord({\n\tevent,\n\targument,\n}: {\n\tevent: Event;\n\targument: number;\n}): number {\n\treturn argument;\n}\n","name":"setCurrentRecord","parameters":{"argument":"Number"},"type":"Number"}]
+[]

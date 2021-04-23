@@ -7,63 +7,6 @@
 			name: 'AutoComplete',
 			options: [
 				{
-					value: false,
-					label: 'Use as filter',
-					key: 'useAsFilter',
-					type: 'TOGGLE',
-				},
-				{
-					value: '',
-					label: 'Filter model',
-					key: 'filterModel',
-					type: 'MODEL',
-					configuration: {
-						condition: {
-							type: 'SHOW',
-							option: 'useAsFilter',
-							comparator: 'EQ',
-							value: true,
-						},
-					},
-				},
-				{
-					type: 'FILTER',
-					label: 'Filter by',
-					key: 'filterBy',
-					value: {},
-					configuration: {
-						dependsOn: 'filterModel',
-						apiVersion: 'v1',
-						condition: {
-							type: 'SHOW',
-							option: 'useAsFilter',
-							comparator: 'EQ',
-							value: true,
-						},
-					},
-				},
-				{
-					label: 'Filter type',
-					key: 'filterType',
-					value: 'in',
-					type: 'CUSTOM',
-					configuration: {
-						condition: {
-							type: 'SHOW',
-							option: 'useAsFilter',
-							comparator: 'EQ',
-							value: true,
-						},
-						as: 'DROPDOWN',
-						dataType: 'string',
-						allowedInput: [
-							{ name: 'Equal to', value: 'eq' },
-							{ name: 'Not equal to', value: 'neq' },
-							{ name: 'In', value: 'in' },
-						],
-					},
-				},
-				{
 					value: { label: ['Autocomplete'], value: [] },
 					label: 'Label',
 					key: 'customModelAttribute',

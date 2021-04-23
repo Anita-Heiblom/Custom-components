@@ -5,9 +5,6 @@
 	orientation: 'HORIZONTAL',
 	jsx: (() => {
 		const {
-			useAsFilter,
-			filterBy,
-			filterType,
 			disabled,
 			error,
 			placeholder,
@@ -46,18 +43,17 @@
 			CheckBoxOutlineBlank,
 		} = window.MaterialUI.Icons;
 		const {
-			useText,
-			getProperty,
-			getCustomModelAttribute,
-			useAllQuery,
 			env,
+			getCustomModelAttribute,
+			getProperty,
+			useAllQuery,
+			useText,
 		} = B;
 		const isDev = env === 'dev';
 		const displayError = showError === 'built-in';
 		const placeholderText = useText(placeholder);
 		const helper = useText(helperText);
 		const nameAttributeValue = useText(nameAttribute);
-		const rawFilterBy = B.useFilter(filterBy);
 
 		const {
 			id: customModelAttributeId,
@@ -70,10 +66,13 @@
 		const { name: customModelAttributeName, validations: { required } = {} } =
 			customModelAttribute || {};
 		const { kind, values: listValues } = getProperty(property) || {};
-		const [currentValue, setCurrentValue] = useState(useText(defaultValue));
+		const [currentValue, setCurrentValue] = useState(
+			parseInt(useText(defaultValue))
+		);
 		const [currentLabel, setCurrentLabel] = useState('');
-
+		const mounted = useRef(false);
 		const labelText = useText(label);
+
 		const textFieldProps = {
 			disabled,
 			variant,
@@ -155,7 +154,7 @@
 				  }, {})
 				: {};
 
-		const { loading, error: err, data, refetch } =
+		const { loading, error: err, data: { results } = {}, refetch } =
 			model &&
 			useAllQuery(model, {
 				...useFilter,
@@ -164,13 +163,39 @@
 				variables: {
 					...(orderBy ? { sort: { relation: sort } } : {}),
 				},
+				onCompleted(res) {
+					const hasResult = res && res.result && res.result.length > 0;
+					if (hasResult) {
+						B.triggerEvent('onSuccess', res.results);
+					} else {
+						B.triggerEvent('onNoResults');
+					}
+				},
+				onError(resp) {
+					if (!displayError) {
+						B.triggerEvent('onError', resp);
+					}
+				},
 			});
 
 		useEffect(() => {
-			if (!isDev && data) {
+			mounted.current = true;
+			return () => {
+				mounted.current = false;
+			};
+		}, []);
+
+		useEffect(() => {
+			if (!isDev && results) {
 				resetFilter();
 			}
-		}, [data]);
+		}, [results]);
+
+		useEffect(() => {
+			if (mounted.current && loading) {
+				B.triggerEvent('onLoad', loading);
+			}
+		}, [loading]);
 
 		useEffect(() => {
 			if (isDev) {
@@ -178,7 +203,10 @@
 			}
 		}, [isDev, defaultValue]);
 
-		B.defineFunction('Clear', () => setCurrentValue(null));
+		B.defineFunction('Clear', () => {
+			setCurrentValue(multiple ? [] : null);
+			setSearchParam('');
+		});
 		B.defineFunction('Refetch', () => refetch());
 
 		useEffect(() => {
@@ -190,40 +218,14 @@
 			};
 		}, [searchParam]);
 
-		const mounted = useRef(false);
-
 		useEffect(() => {
-			mounted.current = true;
-			return () => {
-				mounted.current = false;
-			};
-		}, []);
-
-		useEffect(() => {
-			if (mounted.current && loading) {
-				B.triggerEvent('onLoad', loading);
-			}
-		}, [loading]);
-
-		if (err && !displayError) {
-			B.triggerEvent('onError', err);
-		}
-
-		const { results } = data || {};
-		if (results) {
-			if (results.length > 0) {
-				B.triggerEvent('onSuccess', results);
-			} else {
-				B.triggerEvent('onNoResults');
-			}
-		}
+			B.triggerEvent('onChange', currentValue);
+		});
 
 		const onChange = (_, newValue) => {
 			if (!valueProp || !newValue) {
 				setCurrentValue(newValue);
 				setCurrentLabel(newValue);
-				B.triggerEvent('OnChange', newValue);
-				B.triggerEvent('sendFilter', { filter: undefined, label: labelText });
 				return;
 			}
 
@@ -242,37 +244,10 @@
 				newCurrentValue = newValue.map((rec) => rec[valueProp.name] || rec);
 			}
 			setCurrentValue(newCurrentValue);
-			B.triggerEvent('OnChange', newCurrentValue);
-			if (useAsFilter) {
-				if ((multiple && newCurrentValue.length > 0) || !multiple) {
-					const value = getDeepestObject(rawFilterBy);
-					setDeepestKey(rawFilterBy, value, newCurrentValue);
-					B.triggerEvent('sendFilter', {
-						filter: rawFilterBy,
-						label: labelText,
-					});
-				} else {
-					B.triggerEvent('sendFilter', { filter: undefined, label: labelText });
-				}
-			}
 		};
 
-		const getDeepestObject = (obj) => {
-			if (typeof obj[Object.keys(obj)] === 'object') {
-				return getDeepestObject(obj[Object.keys(obj)]);
-			}
-			return obj;
-		};
-
-		const setDeepestKey = (obj, value, newCurrentValue) => {
-			if (Object.values(obj).includes(value)) {
-				const key = Object.keys(obj);
-				return (obj[key] = { [filterType]: newCurrentValue });
-			}
-			return setDeepestKey(obj[Object.keys(obj)], value, newCurrentValue);
-		};
-
-		const getDefaultValue = React.useCallback(() => {
+		const getRecords = React.useCallback(() => {
+			debugger;
 			if (!currentValue || !results) {
 				return multiple ? [] : null;
 			}
@@ -295,15 +270,17 @@
 			}, []);
 
 			const singleRecord = currentRecords[0] ? { ...currentRecords[0] } : null;
-			return multiple ? currentRecords : singleRecord;
-		}, [results]);
 
-		const defaultRecord = getDefaultValue();
+			return multiple ? currentRecords : singleRecord;
+		}, [currentValue, results]);
+
+		const record = getRecords();
+
 		useEffect(() => {
-			if (!multiple && defaultRecord && searchProp) {
-				setCurrentLabel(defaultRecord[searchProp.name]);
+			if (!multiple && record && searchProp) {
+				setCurrentLabel(record[searchProp.name]);
 			}
-		}, [defaultRecord]);
+		}, [record]);
 
 		const renderLabel = (option) => {
 			const optionLabel = option[searchProp.name];
@@ -340,7 +317,6 @@
 		if (kind === 'list' || kind === 'LIST') {
 			const onPropertyListChange = (_, newValue) => {
 				setCurrentValue(newValue);
-				B.triggerEvent('OnChange');
 			};
 
 			const selectValues =
@@ -393,7 +369,7 @@
 		}
 
 		if (err && displayError) return <span>{err.message}</span>;
-		if (!data || hasNoProp) {
+		if (!results || hasNoProp) {
 			return (
 				<TextField
 					{...textFieldProps}
@@ -406,13 +382,14 @@
 			);
 		}
 
+		debugger;
 		return (
 			<Autocomplete
 				multiple={multiple}
 				freeSolo={freeSolo}
-				autoSelect={freeSolo}
 				options={results}
-				defaultValue={defaultRecord}
+				value={record}
+				inputValue={searchParam}
 				getOptionLabel={renderLabel}
 				getOptionSelected={(option, value) => value.id === option.id}
 				PopoverProps={{
@@ -420,11 +397,8 @@
 						root: classes.popover,
 					},
 				}}
-				onInputChange={(_, inputValue) => {
-					if (!freeSolo) {
-						return;
-					}
-					setSearchParam(inputValue);
+				onInputChange={(event, inputValue) => {
+					if (event) setSearchParam(inputValue);
 				}}
 				onChange={onChange}
 				disableCloseOnSelect={!closeOnSelect}
@@ -462,8 +436,8 @@
 		);
 	})(),
 	styles: (B) => (t) => {
-		const style = new B.Styling(t);
-		const { color: colorFunc } = B;
+		const { color: colorFunc, Styling } = B;
+		const style = new Styling(t);
 		const getOpacColor = (col, val) => colorFunc.alpha(col, val);
 		return {
 			root: {
