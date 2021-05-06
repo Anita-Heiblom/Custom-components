@@ -245,6 +245,7 @@
 			B.triggerEvent('OnChange', newCurrentValue);
 			if (useAsFilter) {
 				if ((multiple && newCurrentValue.length > 0) || !multiple) {
+					debugger;
 					const value = getDeepestObject(rawFilterBy);
 					setDeepestKey(rawFilterBy, value, newCurrentValue);
 					B.triggerEvent('sendFilter', {
