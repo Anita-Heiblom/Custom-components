@@ -45,8 +45,6 @@
 		const helper = useText(helperText);
 		const placeholderText = useText(placeholder);
 		const rawFilterBy = useFilter(filterBy);
-		const filterProp = Object.keys(filterBy);
-		const filterPropType = isDev ? null : getProperty(filterProp[0]).kind;
 
 		const localeMap = {
 			nl: nlLocale,
@@ -79,8 +77,7 @@
 			if (useAsFilter) {
 				if (date !== null && date.toString() !== 'Invalid Date') {
 					const value = getDeepestObject(rawFilterBy);
-					const parsedDate =
-						filterPropType === 'date' ? toJSONLocal(date) : date.toISOString();
+					const parsedDate = toJSONLocal(date);
 					setDeepestKey(rawFilterBy, value, parsedDate);
 					B.triggerEvent('sendFilter', {
 						filter: rawFilterBy,

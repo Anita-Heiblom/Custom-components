@@ -245,7 +245,6 @@
 			B.triggerEvent('OnChange', newCurrentValue);
 			if (useAsFilter) {
 				if ((multiple && newCurrentValue.length > 0) || !multiple) {
-					debugger;
 					const value = getDeepestObject(rawFilterBy);
 					setDeepestKey(rawFilterBy, value, newCurrentValue);
 					B.triggerEvent('sendFilter', {
@@ -342,6 +341,24 @@
 			const onPropertyListChange = (_, newValue) => {
 				setCurrentValue(newValue);
 				B.triggerEvent('OnChange');
+				if (useAsFilter) {
+					if (
+						(multiple && newValue.length > 0) ||
+						(!multiple && newValue !== null)
+					) {
+						const value = getDeepestObject(rawFilterBy);
+						setDeepestKey(rawFilterBy, value, newValue);
+						B.triggerEvent('sendFilter', {
+							filter: rawFilterBy,
+							label: labelText,
+						});
+					} else {
+						B.triggerEvent('sendFilter', {
+							filter: undefined,
+							label: labelText,
+						});
+					}
+				}
 			};
 
 			const selectValues =

@@ -33,7 +33,6 @@
 					value: {},
 					configuration: {
 						dependsOn: 'filterModel',
-						apiVersion: 'v1',
 						condition: {
 							type: 'SHOW',
 							option: 'useAsFilter',
