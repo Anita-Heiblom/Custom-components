@@ -44,8 +44,10 @@
 		const [selectedDate, setSelectedDate] = useState(null);
 		const helper = useText(helperText);
 		const placeholderText = useText(placeholder);
-		const rawFilterBy = useFilter(filterBy);
-		const filterProp = Object.keys(filterBy);
+		const rawFilterBy = isDev ? null : useFilter(Object.values(filterBy)[0][0]);
+		const filterProp = isDev
+			? null
+			: Object.keys(Object.values(filterBy)[0][0]);
 		const filterPropType = isDev ? null : getProperty(filterProp[0]).kind;
 
 		const localeMap = {
