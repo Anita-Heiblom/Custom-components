@@ -1,8 +1,8 @@
 (() => ({
-	name: 'Button',
-	icon: 'ButtonIcon',
-	category: 'BUTTON',
-	keywords: ['Button'],
+	name: 'Submit Button',
+	icon: 'SubmitButtonIcon',
+	category: 'FORM',
+	keywords: ['Form', 'input', 'submit', 'button', 'submitbutton'],
 	structure: [
 		{
 			name: 'Button',
@@ -17,10 +17,24 @@
 					},
 				},
 				{
+					type: 'CUSTOM',
+					label: 'type',
+					key: 'type',
+					value: 'submit',
+					configuration: {
+						as: 'BUTTONGROUP',
+						dataType: 'string',
+						allowedInput: [
+							{ name: 'Submit', value: 'submit' },
+							{ name: 'Reset', value: 'reset' },
+						],
+					},
+				},
+				{
 					type: 'VARIABLE',
 					label: 'Button text',
 					key: 'buttonText',
-					value: ['Button'],
+					value: ['Send'],
 				},
 				{
 					value: false,
@@ -1305,9 +1319,9 @@
 						as: 'BUTTONGROUP',
 						dataType: 'string',
 						allowedInput: [
-							{ name: 'Small', value: 'small' },
-							{ name: 'Medium', value: 'medium' },
 							{ name: 'Large', value: 'large' },
+							{ name: 'Medium', value: 'medium' },
+							{ name: 'Small', value: 'small' },
 						],
 						condition: {
 							type: 'HIDE',
@@ -1325,16 +1339,16 @@
 					configuration: {
 						as: 'BUTTONGROUP',
 						dataType: 'string',
-						allowedInput: [
-							{ name: 'Start', value: 'start' },
-							{ name: 'End', value: 'end' },
-						],
 						condition: {
 							type: 'HIDE',
 							option: 'icon',
 							comparator: 'EQ',
 							value: 'None',
 						},
+						allowedInput: [
+							{ name: 'Start', value: 'start' },
+							{ name: 'End', value: 'end' },
+						],
 					},
 				},
 				{
@@ -1354,6 +1368,9 @@
 					key: 'addTooltip',
 					value: false,
 					type: 'TOGGLE',
+					configuration: {
+						as: 'VISIBILITY',
+					},
 				},
 				{
 					label: 'Toggle tooltip visibility',
